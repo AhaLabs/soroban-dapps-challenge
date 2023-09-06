@@ -1,0 +1,20 @@
+{
+  "name": "soroban-tutorial",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@stellar/freighter-api": "^1.6.0",
+    "astro": "^3.0.3",
+    "liquidity-pool-contract": "file:../.soroban/contracts/liquidity-pool",
+    "share-token-contract": "file:../.soroban/contracts/share-token",
+    "token-a-contract": "file:../.soroban/contracts/token-a",
+    "token-b-contract": "file:../.soroban/contracts/token-b"
+  }
+}
