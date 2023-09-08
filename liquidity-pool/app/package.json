@@ -11,7 +11,11 @@
   },
   "dependencies": {
     "@stellar/freighter-api": "^1.6.0",
-    "astro": "^3.0.3"
+    "astro": "^3.0.3",
+    "btc": "file:../.soroban/contracts/token-b",
+    "lp-token": "file:../.soroban/contracts/share-token",
+    "pool": "file:../.soroban/contracts/liquidity-pool",
+    "usdc": "file:../.soroban/contracts/token-a"
   },
   "engines": {
     "node": "18.17.0",

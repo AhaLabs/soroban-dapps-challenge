@@ -1,0 +1,67 @@
+---
+import Card from './Card.astro'
+---
+
+<Card>
+  <h2>Balances</h2>
+  <nav>
+    <ul>
+      <li>
+        <h3>USDC</h3>
+        <span data-balance-usdc>-</span>
+      </li>
+      <li>
+        <h3>BTC</h3>
+        <span data-balance-btc>-</span>
+      </li>
+      <li>
+        <h3>LP</h3>
+        <span data-balance-share>-</span>
+      </li>
+    </ul>
+  </nav>
+</Card>
+
+<style>
+  nav ul {
+    display: flex;
+    justify-content: space-between;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  li {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    flex-direction: column;
+    text-align: center;
+  }
+  h3 {
+    font-size: 1em;
+    margin: 0;
+  }
+</style>
+
+<script>
+  import { Address, usdc, btc, shareToken } from '../contracts'
+  import * as wallet from '../wallet'
+
+  const balanceUsdc = document.querySelector('[data-balance-usdc]')
+  const balanceBtc = document.querySelector('[data-balance-btc]')
+  const balanceShare = document.querySelector('[data-balance-share]')
+
+  wallet.onChange(async ({ account, enabled }) => {
+    if (!account || !enabled) return
+    const address = new Address(account)
+    const [usdcBalance, btcBalance] = await Promise.all([
+      usdc.balance({ id: address }),
+      btc.balance({ id: address }),
+      shareToken.balance({ id: address }),
+    ])
+    balanceUsdc.innerHTML = usdcBalance
+    balanceBtc.innerHTML = btcBalance
+    balanceShare.innerHTML = btcBalance
+  })
+</script>
+

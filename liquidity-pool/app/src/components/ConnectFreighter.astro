@@ -1,6 +1,6 @@
 <div id="freighter-wrap" class="wrap" aria-live="polite">
-  <div style="display: none" data-freighter-ellipsis class="ellipsis transparent"></div>
-  <button style="display: none" class="transparent" data-connect aria-controls="freighter-wrap">Connect</button>
+  <small style="display: none" data-freighter-ellipsis class="ellipsis transparent"></small>
+  <button style="display: none" class="transparent" data-freighter-connect aria-controls="freighter-wrap">Connect</button>
 </div>
 
 <style>
@@ -29,39 +29,41 @@
 </style>
 
 <script>
-  import { isAllowed, setAllowed, getUserInfo } from '@stellar/freighter-api';
+  import * as wallet from '../wallet';
 
   const wrap = document.querySelector('#freighter-wrap');
-  const button = document.querySelector('[data-connect]');
+  const button = document.querySelector('[data-freighter-connect]');
   const ellipsis = document.querySelector('[data-freighter-ellipsis]');
 
-  async function getPk() {
-    const { publicKey } = await getUserInfo();
-    return publicKey;
-  }
+  button.addEventListener('click', async () => {
+    button.disabled = true;
+    await wallet.enable();
+    button.disabled = false;
+  });
 
-  async function setLoggedIn() {
-    const publicKey = await getPk();
-    ellipsis.innerHTML = `Signed in as ${publicKey}`;
-    ellipsis.title = publicKey;
-    ellipsis.style.display = 'block';
+  function show(element: HTMLElement) {
+    element.style.display = 'block';
     setTimeout(() => {
-      ellipsis.style.opacity = '1';
+      element.style.opacity = '1';
     }, 1);
   }
 
-  if (await isAllowed()) {
-    if (await getPk()) setLoggedIn();
-    else wrap.innerHTML = 'Freighter is locked.<br>Sign in & refresh the page.';
-  } else {
-    button.style.display = 'block';
-    setTimeout(() => {
-      button.style.opacity = '1';
-    }, 1);
-    button.addEventListener('click', async () => {
-      button.disabled = true;
-      await setAllowed();
-      await setLoggedIn();
-    });
+  function hide(element: HTMLElement) {
+    element.style.removeProperty('opacity');
+    element.style.display = 'none';
   }
+
+  wallet.onChange(async ({ account, enabled }) => {
+    if (enabled) {
+      hide(button);
+      ellipsis.innerHTML = account
+        ? `Signed in as ${account}`
+        : 'Please unlock Freighter';
+      ellipsis.title = account;
+      show(ellipsis);
+    } else {
+      hide(ellipsis);
+      show(button);
+    }
+  });
 </script>
