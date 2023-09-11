@@ -1,6 +1,9 @@
 <div id="freighter-wrap" class="wrap" aria-live="polite">
-  <small style="display: none" data-freighter-ellipsis class="ellipsis transparent"></small>
-  <button style="display: none" class="transparent" data-freighter-connect aria-controls="freighter-wrap">Connect</button>
+  <small class="ifSignedIn ellipsis" data-freighter-ellipsis></small>
+  <div class="ifSignedOut">
+    <small style="display: none" data-freighter-plz-unlock>Please unlock Freighter</small>
+    <button style="display: none" data-freighter-connect aria-controls="freighter-wrap">Connect</button>
+  </div>
 </div>
 
 <style>
@@ -21,11 +24,6 @@
     text-align: center;
     white-space: nowrap;
   }
-
-  .transparent {
-    opacity: 0;
-    transition: opacity 150ms ease-in-out;
-  }
 </style>
 
 <script>
@@ -34,6 +32,7 @@
   const wrap = document.querySelector('#freighter-wrap');
   const button = document.querySelector('[data-freighter-connect]');
   const ellipsis = document.querySelector('[data-freighter-ellipsis]');
+  const pleaseUnlock = document.querySelector('[data-freighter-plz-unlock]');
 
   button.addEventListener('click', async () => {
     button.disabled = true;
@@ -41,29 +40,16 @@
     button.disabled = false;
   });
 
-  function show(element: HTMLElement) {
-    element.style.display = 'block';
-    setTimeout(() => {
-      element.style.opacity = '1';
-    }, 1);
-  }
-
-  function hide(element: HTMLElement) {
-    element.style.removeProperty('opacity');
-    element.style.display = 'none';
-  }
-
   wallet.onChange(async ({ account, enabled }) => {
-    if (enabled) {
-      hide(button);
-      ellipsis.innerHTML = account
-        ? `Signed in as ${account}`
-        : 'Please unlock Freighter';
+    if (enabled && account) {
+      ellipsis.innerHTML = `Signed in as ${account}`;
       ellipsis.title = account;
-      show(ellipsis);
+    } else if (enabled && !account) {
+      pleaseUnlock.style.display = 'block';
+      button.style.display = 'none';
     } else {
-      hide(ellipsis);
-      show(button);
+      pleaseUnlock.style.display = 'none';
+      button.style.display = 'block';
     }
   });
 </script>

@@ -21,6 +21,30 @@ export function onChange(handler: onChangeHandler) {
   onChangeHandlers.push(handler);
 };
 
+function show(elements: HTMLElement[]) {
+  elements.forEach(element => {
+    element.style.display = 'block';
+    // CSS hack to force opacity transition to work
+    setTimeout(() => {
+      element.style.opacity = '1';
+    }, 1);
+  });
+}
+
+function hide(elements: HTMLElement[]) {
+  elements.forEach(element => {
+    element.style.removeProperty('opacity');
+    element.style.display = 'none';
+  });
+}
+
+const signedInElements: HTMLElement[] = Array.from(
+  document.querySelectorAll('.ifSignedIn')
+);
+const signedOutElements: HTMLElement[] = Array.from(
+  document.querySelectorAll('.ifSignedOut')
+);
+
 async function refresh() {
   const [
     newUserInfo,
@@ -50,6 +74,13 @@ async function refresh() {
       networkUrl,
       networkPassphrase,
     })));
+    if (enabled && account) {
+      show(signedInElements);
+      hide(signedOutElements);
+    } else {
+      hide(signedInElements);
+      show(signedOutElements);
+    }
   }
 }
 
