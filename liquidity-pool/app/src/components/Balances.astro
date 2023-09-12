@@ -8,11 +8,17 @@ import Card from './Card.astro'
     <ul>
       <li>
         <h3>USDC</h3>
-        <span data-balance-usdc>-</span>
+        <span id="balance-usdc" aria-live="polite">-</span>
+        <small>
+          <button disabled aria-controls="balance-usdc" data-mint-usdc>Mint</button>
+        </small>
       </li>
       <li>
         <h3>BTC</h3>
-        <span data-balance-btc>-</span>
+        <span id="balance-btc" aria-live="polite">-</span>
+        <small>
+          <button disabled aria-controls="balance-btc" data-mint-btc>Mint</button>
+        </small>
       </li>
       <li>
         <h3>LP</h3>
@@ -29,10 +35,10 @@ import Card from './Card.astro'
     list-style: none;
     padding: 0;
     margin: 0;
+    gap: 1em;
   }
   li {
     display: flex;
-    justify-content: space-between;
     width: 100%;
     flex-direction: column;
     text-align: center;
@@ -46,22 +52,53 @@ import Card from './Card.astro'
 <script>
   import { Address, usdc, btc, shareToken } from '../contracts'
   import * as wallet from '../wallet'
+  import { formatBalance } from '../util'
 
-  const balanceUsdc = document.querySelector('[data-balance-usdc]')
-  const balanceBtc = document.querySelector('[data-balance-btc]')
+  const balanceUsdc = document.querySelector('#balance-usdc')
+  const balanceBtc = document.querySelector('#balance-btc')
   const balanceShare = document.querySelector('[data-balance-share]')
 
   wallet.onChange(async ({ account, enabled }) => {
     if (!account || !enabled) return
+    if (!mintUsdc.classList.contains('loading')) mintUsdc.disabled = false
+    if (!mintBtc.classList.contains('loading')) mintBtc.disabled = false
+    await updateBalances(account)
+  })
+
+  async function updateBalances(account) {
     const address = new Address(account)
-    const [usdcBalance, btcBalance] = await Promise.all([
+    const [usdcBalance, btcBalance, shareBalance] = await Promise.all([
       usdc.balance({ id: address }),
       btc.balance({ id: address }),
       shareToken.balance({ id: address }),
     ])
-    balanceUsdc.innerHTML = usdcBalance
-    balanceBtc.innerHTML = btcBalance
-    balanceShare.innerHTML = btcBalance
+    balanceUsdc.innerHTML = formatBalance(usdcBalance, 7)
+    balanceBtc.innerHTML = formatBalance(btcBalance, 7)
+    balanceShare.innerHTML = formatBalance(shareBalance, 7)
+  }
+
+  const mintUsdc = document.querySelector('[data-mint-usdc]')
+  const mintBtc = document.querySelector('[data-mint-btc]')
+
+  mintUsdc.addEventListener('click', async () => {
+    await mint(usdc.mint, mintUsdc, 100000)
   })
+  
+  mintBtc.addEventListener('click', async () => {
+    await mint(btc.mint, mintBtc, 5)
+  })
+
+  async function mint(mintFn, button, amount = 100) {
+    const { account, enabled } = wallet.getState()
+    if (!account || !enabled) return
+
+    const address = new Address(account)
+    button.disabled = true
+    button.classList.add('loading')
+    await mintFn({ to: address, amount: BigInt(amount * 10**7) })
+    button.disabled = false
+    button.classList.remove('loading')
+    await updateBalances(account)
+  }
 </script>
 

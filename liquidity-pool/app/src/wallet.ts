@@ -7,6 +7,16 @@ let network: string
 let networkUrl: string
 let networkPassphrase: string
 
+export function getState() {
+  return {
+    account,
+    enabled,
+    network,
+    networkUrl,
+    networkPassphrase,
+  }
+}
+
 type onChangeHandler = (args: {
   account: string
   enabled: boolean
