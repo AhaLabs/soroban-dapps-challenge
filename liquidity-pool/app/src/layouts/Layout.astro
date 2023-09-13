@@ -1,9 +1,6 @@
 --- 
-interface Props {
-	title: string;
-}
-
-const { title } = Astro.props;
+import Balances from '../components/Balances.astro';
+import ConnectFreighter from '../components/ConnectFreighter.astro';
 ---
 
 <!DOCTYPE html>
@@ -14,12 +11,54 @@ const { title } = Astro.props;
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
-		<title>{title}</title>
+		<title>Liquidity Pool</title>
 	</head>
 	<body>
-		<slot />
+    <nav>
+      <h1>Liquidity Pool</h1>
+      <ConnectFreighter />
+    </nav>
+    <main>
+      <div class="columns">
+        <div><Balances /></div>
+        <div>
+          <slot />
+        </div>
+      </div>
+    </main>
 	</body>
 </html>
+<style>
+  nav {
+    display: flex;
+    flex-flow: row wrap;
+    gap: 1em;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1em;
+  }
+  h1 {
+    margin: 0;
+    font-size: inherit;
+  }
+  main {
+    max-width: 55rem;
+    padding: 0 1rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .columns {
+    display: flex;
+    gap: 1em;
+    flex-flow: row wrap;
+  }
+  .columns > :first-child {
+    flex: 1 1 3em;
+  }
+  .columns > :last-child {
+    flex: 3 1 10em;
+  }
+</style>
 <style is:global>
   :root {
     --white: #fff;
@@ -136,13 +175,6 @@ const { title } = Astro.props;
 		white-space: nowrap;
 		width: 1px;
 	}
-
-  .container {
-    max-width: 38rem;
-    padding: 0 1rem;
-    margin-left: auto;
-    margin-right: auto;
-  }
 
   .ifSignedIn,
   .ifSignedOut {

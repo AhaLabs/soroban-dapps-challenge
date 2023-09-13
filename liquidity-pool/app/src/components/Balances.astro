@@ -2,46 +2,48 @@
 import Card from './Card.astro'
 ---
 
-<Card>
-  <h2>Balances</h2>
+<Card title="Balances">
   <nav>
-    <ul>
-      <li>
-        <h3>USDC</h3>
-        <span id="balance-usdc" aria-live="polite">-</span>
-        <small>
-          <button disabled aria-controls="balance-usdc" data-mint-usdc>Mint</button>
-        </small>
-      </li>
-      <li>
-        <h3>BTC</h3>
-        <span id="balance-btc" aria-live="polite">-</span>
-        <small>
-          <button disabled aria-controls="balance-btc" data-mint-btc>Mint</button>
-        </small>
-      </li>
-      <li>
-        <h3>LP</h3>
-        <span data-balance-share>-</span>
-      </li>
-    </ul>
+    <div>
+      <h3>USDC</h3>
+      <span class="balance" id="balance-usdc" aria-live="polite">-</span>
+      <small>
+        <button disabled aria-controls="balance-usdc" data-mint-usdc>Mint</button>
+      </small>
+    </div>
+    <div>
+      <h3>BTC</h3>
+      <span class="balance" id="balance-btc" aria-live="polite">-</span>
+      <small>
+        <button disabled aria-controls="balance-btc" data-mint-btc>Mint</button>
+      </small>
+    </div>
+    <div>
+      <h3>LP</h3>
+      <span class="balance" data-balance-share>-</span>
+    </div>
   </nav>
 </Card>
 
 <style>
-  nav ul {
-    display: flex;
-    justify-content: space-between;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    gap: 1em;
+  nav {
+    display: grid;
+    gap: 0.5em;
+    grid-template-columns: auto minmax(75px, 1fr) auto;
+    font-size: 0.8em;
+    align-items: stretch;
   }
-  li {
-    display: flex;
-    width: 100%;
-    flex-direction: column;
-    text-align: center;
+  nav > div {
+    display: contents;
+  }
+  nav > div > *:nth-child(-n+2) {
+    border-bottom: 1px dotted transparent;
+  }
+  nav > div:hover > * {
+    border-color: var(--shadow);
+  }
+  .balance {
+    text-align: right;
   }
   h3 {
     font-size: 1em;
