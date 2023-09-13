@@ -1,25 +1,37 @@
 ---
 import Card from './Card.astro'
+import usdc from '../img/usdc.svg'
+import btc from '../img/btc.svg'
+import lp from '../img/lp.svg'
 ---
 
 <Card title="Balances">
   <nav>
     <div>
-      <h3>USDC</h3>
+      <h3>
+        <img src={usdc.src} alt="" />
+        USDC
+      </h3>
       <span class="balance" id="balance-usdc" aria-live="polite">-</span>
       <small>
         <button disabled aria-controls="balance-usdc" data-mint-usdc>Mint</button>
       </small>
     </div>
     <div>
-      <h3>BTC</h3>
+      <h3>
+        <img src={btc.src} alt="" />
+        BTC
+      </h3>
       <span class="balance" id="balance-btc" aria-live="polite">-</span>
       <small>
         <button disabled aria-controls="balance-btc" data-mint-btc>Mint</button>
       </small>
     </div>
     <div>
-      <h3>LP</h3>
+      <h3>
+        <img src={lp.src} alt="" />
+        LP
+      </h3>
       <span class="balance" data-balance-share>-</span>
     </div>
   </nav>
@@ -48,6 +60,11 @@ import Card from './Card.astro'
   h3 {
     font-size: 1em;
     margin: 0;
+  }
+  img {
+    width: 20px;
+    display: inline;
+    vertical-align: bottom;
   }
 </style>
 
