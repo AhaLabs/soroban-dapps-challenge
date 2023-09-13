@@ -17,3 +17,22 @@
     </div>
   </div>
 </div>
+
+<script>
+  import { liquidityPool } from '../contracts'
+  import * as wallet from '../wallet'
+  import { formatBalance } from '../util'
+
+  const usdc = document.querySelector('[data-reserve-usdc]')
+  const btc = document.querySelector('[data-reserve-btc]')
+
+  wallet.onChange(async ({ isSignedIn }) => {
+    if (!isSignedIn) return
+
+    const [reservesUsdc, reservesBtc] = await liquidityPool.getRsrvs()
+
+    usdc.innerHTML = formatBalance(reservesUsdc, 7)
+    btc.innerHTML = formatBalance(reservesBtc, 7)
+  })
+</script>
+
