@@ -1,0 +1,41 @@
+---
+interface Props {
+  selected: 'Deposit' | 'Swap' | 'Withdraw'
+}
+
+const { selected } = Astro.props
+---
+
+<nav>
+  {['Deposit', 'Swap', 'Withdraw'].map(option => {
+    if (option === selected) {
+      return <h2>{option}</h2>
+    } else {
+    return <a href={`/${option === 'Deposit' ? '' : option.toLowerCase()}`}>{option}</a>
+    }
+  })}
+</nav>
+
+<style>
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5em;
+    flex-flow: row wrap;
+  }
+  nav > * {
+    margin: 0;
+    padding: 0.5em 1em;
+  }
+  h2 {
+    background-color: var(--shadow);
+    font-size: 1em;
+    font-weight: normal;
+  }
+  a {
+    color: var(--fg);
+    text-decoration: none;
+  }
+</style>
+

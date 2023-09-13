@@ -1,6 +1,17 @@
 --- 
+interface Props {
+  title: string
+}
+
 import Balances from '../components/Balances.astro';
 import ConnectFreighter from '../components/ConnectFreighter.astro';
+import Stats from '../components/Stats.astro';
+import Card from '../components/Card.astro';
+
+import usdc from '../img/usdc.svg'
+import btc from '../img/btc.svg'
+
+const { title } = Astro.props
 ---
 
 <!DOCTYPE html>
@@ -11,7 +22,7 @@ import ConnectFreighter from '../components/ConnectFreighter.astro';
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Liquidity Pool</title>
+    <title>{ title } • Liquidity Pool</title>
 	</head>
 	<body>
     <nav>
@@ -22,7 +33,15 @@ import ConnectFreighter from '../components/ConnectFreighter.astro';
       <div class="columns">
         <div><Balances /></div>
         <div>
-          <slot />
+          <h2>
+            <img src={usdc.src} alt="" />
+            <img src={btc.src} alt="" />
+            USDC • BTC
+          </h2>
+          <Stats />
+          <Card>
+            <slot />
+          </Card>
         </div>
       </div>
     </main>
@@ -47,16 +66,23 @@ import ConnectFreighter from '../components/ConnectFreighter.astro';
     margin-left: auto;
     margin-right: auto;
   }
-  .columns {
-    display: flex;
-    gap: 1em;
-    flex-flow: row wrap;
-  }
   .columns > :first-child {
     flex: 1 1 3em;
   }
   .columns > :last-child {
     flex: 3 1 10em;
+  }
+  h2 {
+    font-weight: normal;
+    margin: 0;
+  }
+  h2 img {
+    width: 1em;
+    display: inline-block;
+    vertical-align: bottom;
+  }
+  h2 img + img {
+    margin-left: -0.25em;
   }
 </style>
 <style is:global>
@@ -90,7 +116,13 @@ import ConnectFreighter from '../components/ConnectFreighter.astro';
     font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu,
       Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
     line-height: 1.6;
-    font-size: 22px;
+    font-size: 18px;
+  }
+
+  @media(min-width: 800px) {
+    html {
+      font-size: 22px;
+    }
   }
 
   body {
@@ -181,6 +213,12 @@ import ConnectFreighter from '../components/ConnectFreighter.astro';
     display: none;
     opacity: 0;
     transition: opacity 150ms ease-in-out;
+  }
+
+  .columns {
+    display: flex;
+    gap: 1em;
+    flex-flow: row wrap;
   }
 </style>
   

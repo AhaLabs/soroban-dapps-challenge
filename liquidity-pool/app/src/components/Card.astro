@@ -1,25 +1,10 @@
----
-interface Props {
-  title: string
-}
-
-const { title } = Astro.props
----
-
-<div class="card">
-  <h2>{title}</h2>
+<div>
   <slot />
 </div>
 
 <style>
-  h2 {
-    margin: 0 0 0.5em;
-    font-size: 1em;
-    font-weight: normal;
-  }
-	.card {
+	div {
 		padding: 1em;
-    margin-bottom: 1em;
 		border-radius: 7px;
     box-shadow: var(--shadow);
     background-color: var(--bg-prominent);
