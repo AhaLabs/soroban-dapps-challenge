@@ -1,7 +1,7 @@
 <div id="freighter-wrap" class="wrap" aria-live="polite">
   <small class="ifSignedIn ellipsis" data-freighter-ellipsis></small>
   <div class="ifSignedOut">
-    <small style="display: none" data-freighter-plz-unlock>Please unlock Freighter</small>
+    <small style="display: none" data-freighter-error></small>
     <button style="display: none" data-freighter-connect aria-controls="freighter-wrap">Connect</button>
   </div>
 </div>
@@ -32,7 +32,7 @@
   const wrap = document.querySelector('#freighter-wrap');
   const button = document.querySelector('[data-freighter-connect]');
   const ellipsis = document.querySelector('[data-freighter-ellipsis]');
-  const pleaseUnlock = document.querySelector('[data-freighter-plz-unlock]');
+  const errorMsg = document.querySelector('[data-freighter-error]');
 
   button.addEventListener('click', async () => {
     button.disabled = true;
@@ -40,15 +40,20 @@
     button.disabled = false;
   });
 
-  wallet.onChange(async ({ account, enabled }) => {
-    if (enabled && account) {
+  wallet.onChange(async ({ account, enabled, network }) => {
+    if (enabled && account && network === 'FUTURENET') {
       ellipsis.innerHTML = `Signed in as ${account}`;
       ellipsis.title = account;
+    } else if (enabled && account && network !== 'FUTURENET') {
+      errorMsg.innerHTML = 'Please switch to Futurenet';
+      errorMsg.style.display = 'block';
+      button.style.display = 'none';
     } else if (enabled && !account) {
-      pleaseUnlock.style.display = 'block';
+      errorMsg.innerHTML = 'Please unlock Freighter';
+      errorMsg.style.display = 'block';
       button.style.display = 'none';
     } else {
-      pleaseUnlock.style.display = 'none';
+      errorMsg.style.display = 'none';
       button.style.display = 'block';
     }
   });

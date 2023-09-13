@@ -77,11 +77,15 @@ import lp from '../img/lp.svg'
   const balanceBtc = document.querySelector('#balance-btc')
   const balanceShare = document.querySelector('[data-balance-share]')
 
-  wallet.onChange(async ({ account, enabled }) => {
-    if (!account || !enabled) return
-    if (!mintUsdc.classList.contains('loading')) mintUsdc.disabled = false
-    if (!mintBtc.classList.contains('loading')) mintBtc.disabled = false
-    await updateBalances(account)
+  wallet.onChange(async ({ account, isSignedIn }) => {
+    if (!isSignedIn) {
+      mintUsdc.disabled = true
+      mintBtc.disabled = true
+    } else {
+      if (!mintUsdc.classList.contains('loading')) mintUsdc.disabled = false
+      if (!mintBtc.classList.contains('loading')) mintBtc.disabled = false
+      await updateBalances(account)
+    }
   })
 
   async function updateBalances(account) {
@@ -108,8 +112,8 @@ import lp from '../img/lp.svg'
   })
 
   async function mint(mintFn, button, amount = 100) {
-    const { account, enabled } = wallet.getState()
-    if (!account || !enabled) return
+    const { account, isSignedIn } = wallet.getState()
+    if (!isSignedIn) return
 
     const address = new Address(account)
     button.disabled = true

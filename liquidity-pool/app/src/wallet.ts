@@ -7,6 +7,10 @@ let network: string
 let networkUrl: string
 let networkPassphrase: string
 
+export function isSignedIn() {
+  return enabled && !!account && network === 'FUTURENET'
+}
+
 export function getState() {
   return {
     account,
@@ -14,6 +18,7 @@ export function getState() {
     network,
     networkUrl,
     networkPassphrase,
+    isSignedIn: isSignedIn(),
   }
 }
 
@@ -23,6 +28,7 @@ type onChangeHandler = (args: {
   network: string
   networkUrl: string
   networkPassphrase: string
+  isSignedIn: boolean
 }) => Promise<void>;
 
 const onChangeHandlers: onChangeHandler[] = [];
@@ -77,14 +83,16 @@ async function refresh() {
     network = newNetworkDetails.network;
     networkUrl = newNetworkDetails.networkUrl;
     networkPassphrase = newNetworkDetails.networkPassphrase;
+    const signedIn = isSignedIn();
     await Promise.all(onChangeHandlers.map(fn => fn({
       account,
       enabled,
       network,
       networkUrl,
       networkPassphrase,
+      isSignedIn: signedIn,
     })));
-    if (enabled && account) {
+    if (signedIn) {
       show(signedInElements);
       hide(signedOutElements);
     } else {
