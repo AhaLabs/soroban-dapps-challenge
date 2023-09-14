@@ -1,8 +1,115 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Tabs from '../components/Tabs.astro';
+
+import usdc from '../img/usdc.svg'
+import btc from '../img/btc.svg'
 ---
 
 <Layout title="Deposit">
   <Tabs selected="Deposit" />
+  <form data-deposit>
+    <fieldset disabled>
+      <p>
+        <label>
+          <strong>
+            <img src={usdc.src} alt="" />
+            USDC
+          </strong>
+          <input type="number" name="usdc" id="usdc" min="0" />
+        </label>
+      </p>
+      <p>
+        <label>
+          <strong>
+            <img src={btc.src} alt="" />
+            BTC
+          </strong>
+          <input type="number" name="btc" id="btc" min="0" />
+        </label>
+      </p>
+      <p>
+        <label>
+          <span>
+            Max slippage
+            <abbr title="Slippage is the difference between the expected price of a trade and the price at which the trade is executed.">
+              ⓘ
+            </abbr>
+          </span>
+          <input type="number" step="0.1" max="100" min="0.1" name="slip" id="slip" value="0.5" />
+        </label>
+      </p>
+      <p>
+        <button type="submit">Deposit</button>
+      </p>
+    </fieldset>
+  </form>
 </Layout>
+
+<style>
+  img {
+    width: 1em;
+    display: inline-block;
+    margin-bottom: -2.5px;
+  }
+</style>
+  
+<script>
+  import { Address, usdc, btc, liquidityPool } from '../contracts'
+  import * as wallet from '../wallet'
+
+  const form = document.querySelector('[data-deposit]')
+  const fieldset = form.querySelector('fieldset')
+  const usdcInput = form.querySelector('#usdc')
+  const btcInput = form.querySelector('#btc')
+  const slipInput = form.querySelector('#slip')
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault()
+    const { account, isSignedIn } = wallet.getState()
+    if (!isSignedIn) return
+
+    const usdcAmount = parseFloat(usdcInput.value)
+    const btcAmount = parseFloat(btcInput.value)
+    const slip = parseFloat(slipInput.value)
+
+    fieldset.disabled = true
+    fieldset.classList.add('loading')
+
+    const address = new Address(account)
+    const minUsdc = usdcAmount - slip * usdcAmount / 100;
+    const minBtc = btcAmount - slip * btcAmount / 100;
+
+    await liquidityPool.deposit({
+        to: address,
+        desired_a: BigInt(usdcAmount * 10**7),
+        desired_b: BigInt(btcAmount * 10**7),
+        min_a: BigInt(minUsdc * 10**7),
+        min_b: BigInt(minBtc * 10**7),
+    }, { fee: 100000 })
+
+    await wallet.refresh(true)
+
+    usdcInput.value = ''
+    btcInput.value = ''
+    fieldset.disabled = false
+    fieldset.classList.remove('loading')
+  })
+
+  wallet.onChange(async ({ account, isSignedIn }) => {
+    if (!isSignedIn) return
+    fieldset.disabled = false
+
+    const address = new Address(account)
+    const [usdcBalanceBigInt, btcBalanceBigInt] = await Promise.all([
+      usdc.balance({ id: address }),
+      btc.balance({ id: address }),
+    ])
+
+    const usdcBalance = Number(usdcBalanceBigInt / BigInt(1e7))
+    const btcBalance = Number(btcBalanceBigInt / BigInt(1e7))
+
+    usdcInput.max = usdcBalance
+    btcInput.max = btcBalance
+  })
+</script>

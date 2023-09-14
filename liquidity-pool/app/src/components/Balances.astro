@@ -66,6 +66,9 @@ import lp from '../img/lp.svg'
   h3 {
     font-size: 1em;
     margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.25em;
   }
   img {
     width: 20px;
@@ -125,9 +128,9 @@ import lp from '../img/lp.svg'
     button.disabled = true
     button.classList.add('loading')
     await mintFn({ to: address, amount: BigInt(amount * 10**7) })
+    await wallet.refresh(true)
     button.disabled = false
     button.classList.remove('loading')
-    await updateBalances(account)
   }
 </script>
 

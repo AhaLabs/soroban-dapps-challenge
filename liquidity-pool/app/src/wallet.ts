@@ -61,7 +61,7 @@ const signedOutElements: HTMLElement[] = Array.from(
   document.querySelectorAll('.ifSignedOut')
 );
 
-async function refresh() {
+export async function refresh(forceUpdate = false) {
   const [
     newUserInfo,
     newIsEnabled,
@@ -72,6 +72,7 @@ async function refresh() {
     getNetworkDetails(),
   ]);
   if (
+    forceUpdate ||
     newUserInfo.publicKey !== account ||
     newIsEnabled !== enabled ||
     newNetworkDetails.network !== network ||
