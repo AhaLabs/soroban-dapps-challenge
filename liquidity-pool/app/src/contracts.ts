@@ -5,7 +5,6 @@ import { Contract as LiquidityPool, networks as networksLiquidityPool } from 'po
 
 const rpcUrl = 'https://rpc-futurenet.stellar.org	'
 
-export { Address } from 'usdc'
 export const usdc = new USDC({ ...networksUSDC.futurenet, rpcUrl })
 export const btc = new BTC({ ...networksBTC.futurenet, rpcUrl })
 export const shareToken = new ShareToken({ ...networksShareToken.futurenet, rpcUrl })

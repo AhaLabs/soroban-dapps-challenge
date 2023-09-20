@@ -55,7 +55,7 @@ import btc from '../img/btc.svg'
 </style>
   
 <script>
-  import { Address, usdc, btc, liquidityPool } from '../contracts'
+  import { usdc, btc, liquidityPool } from '../contracts'
   import * as wallet from '../wallet'
 
   const form = document.querySelector('[data-deposit]')
@@ -76,12 +76,11 @@ import btc from '../img/btc.svg'
     fieldset.disabled = true
     fieldset.classList.add('loading')
 
-    const address = new Address(account)
     const minUsdc = usdcAmount - slip * usdcAmount / 100;
     const minBtc = btcAmount - slip * btcAmount / 100;
 
     await liquidityPool.deposit({
-        to: address,
+        to: account,
         desired_a: BigInt(usdcAmount * 10**7),
         desired_b: BigInt(btcAmount * 10**7),
         min_a: BigInt(minUsdc * 10**7),
@@ -100,10 +99,9 @@ import btc from '../img/btc.svg'
     if (!isSignedIn) return
     fieldset.disabled = false
 
-    const address = new Address(account)
     const [usdcBalanceBigInt, btcBalanceBigInt] = await Promise.all([
-      usdc.balance({ id: address }),
-      btc.balance({ id: address }),
+      usdc.balance({ id: account }),
+      btc.balance({ id: account }),
     ])
 
     const usdcBalance = Number(usdcBalanceBigInt / BigInt(1e7))

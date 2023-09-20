@@ -12,7 +12,6 @@ import { LiquidityActions, AccountData } from 'components/organisms'
 import { Utils } from 'shared/utils'
 import { TokenAIcon, TokenBIcon } from "components/icons"
 import {
-  Address,
   tokenAContract,
   tokenBContract,
   shareTokenContract,
@@ -74,9 +73,9 @@ const Home = (): JSX.Element => {
     });
     if (account) {
       Promise.all([
-        tokenAContract.balance({ id: new Address(account) }),
-        tokenBContract.balance({ id: new Address(account) }),
-        shareTokenContract.balance({ id: new Address(account) })
+        tokenAContract.balance({ id: account }),
+        tokenBContract.balance({ id: account }),
+        shareTokenContract.balance({ id: account })
       ]).then(fetched => {
         setTokenA(prevTokenA => ({
           ...prevTokenA,

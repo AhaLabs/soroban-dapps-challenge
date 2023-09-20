@@ -78,7 +78,7 @@ import lp from '../img/lp.svg'
 </style>
 
 <script>
-  import { Address, usdc, btc, shareToken } from '../contracts'
+  import { usdc, btc, shareToken } from '../contracts'
   import * as wallet from '../wallet'
   import { formatBalance } from '../util'
 
@@ -98,11 +98,10 @@ import lp from '../img/lp.svg'
   })
 
   async function updateBalances(account) {
-    const address = new Address(account)
     const [usdcBalance, btcBalance, shareBalance] = await Promise.all([
-      usdc.balance({ id: address }),
-      btc.balance({ id: address }),
-      shareToken.balance({ id: address }),
+      usdc.balance({ id: account }),
+      btc.balance({ id: account }),
+      shareToken.balance({ id: account }),
     ])
     balanceUsdc.innerHTML = formatBalance(usdcBalance, 7)
     balanceBtc.innerHTML = formatBalance(btcBalance, 7)
@@ -124,10 +123,9 @@ import lp from '../img/lp.svg'
     const { account, isSignedIn } = wallet.getState()
     if (!isSignedIn) return
 
-    const address = new Address(account)
     button.disabled = true
     button.classList.add('loading')
-    await mintFn({ to: address, amount: BigInt(amount * 10**7) })
+    await mintFn({ to: account, amount: BigInt(amount * 10**7) })
     await wallet.refresh(true)
     button.disabled = false
     button.classList.remove('loading')
